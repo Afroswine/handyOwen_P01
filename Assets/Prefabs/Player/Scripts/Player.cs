@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(TankController))]
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IHealth
 {
     // backing field
     [Header("Player")]
@@ -74,7 +74,7 @@ public class Player : MonoBehaviour
         m_HealthUpdate.Invoke();
     }
 
-    public void DecreaseHealth(int amount)
+    public void TakeDamage(int amount)
     {
         // if the player isn't invincible
         if (!IsInvincible)

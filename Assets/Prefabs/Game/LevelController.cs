@@ -11,7 +11,7 @@ public class LevelController : MonoBehaviour
         if (Input.GetKey(KeyCode.Escape))
             QuitGame();
 
-        if (Input.GetKey(KeyCode.R))
+        if (Input.GetKey(KeyCode.Backspace))
             Restart();
     }
 

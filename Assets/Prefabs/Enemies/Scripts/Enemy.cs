@@ -3,8 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IEnemyHealth
 {
+    [Header("IHealth")]
+    [SerializeField] int _maxHealth;
+    public int MaxHealth => _maxHealth;
+    [SerializeField] int _currentHealth;
+    public int CurrentHealth
+    {
+        get { return _currentHealth; }
+        private set { _currentHealth = value; }
+    }
+    [Header("Enemy")]
     [SerializeField] int _damageAmount = 1;
     [SerializeField] ParticleSystem _impactParticles;
     [SerializeField] AudioClip _impactSound;
@@ -19,6 +29,11 @@ public class Enemy : MonoBehaviour
     private void FixedUpdate()
     {
         Move();
+    }
+
+    public void TakeDamage(int damage)
+    {
+        _currentHealth -= damage;
     }
 
     public void Move()
@@ -38,7 +53,7 @@ public class Enemy : MonoBehaviour
 
     protected virtual void PlayerImpact(Player player)
     {
-        player.DecreaseHealth(_damageAmount);
+        player.TakeDamage(_damageAmount);
     }
 
     private void ImpactFeedback()
