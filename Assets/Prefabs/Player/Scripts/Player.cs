@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(TankController))]
-public class Player : MonoBehaviour, IHealth
+public class Player : MonoBehaviour, IDamageablePlayer
 {
     // backing field
     [Header("Player")]
@@ -20,14 +20,17 @@ public class Player : MonoBehaviour, IHealth
     [SerializeField] ParticleSystem _hurtPS;
     [Tooltip("Audio to play when the player is hurt.")]
     [SerializeField] AudioClip _hurtSound;
+    [SerializeField] float _hurtSoundVolume = 1f;
     [Tooltip("PS to play when the player is killed.")]
     [SerializeField] ParticleSystem _deathPS;
     [Tooltip("Audio to play when the player is killed.")]
     [SerializeField] AudioClip _deathSound;
+    [SerializeField] float _deathSoundVolume = 1f;
     [Tooltip("PS to play when the player blocks an attack.")]
     [SerializeField] ParticleSystem _blockPS;
     [Tooltip("Audio to play when the player blocks an attack.")]
     [SerializeField] AudioClip _blockSound;
+    [SerializeField] float _blockSoundVolume = 1f;
 
     public int MaxHealth
     {
@@ -79,7 +82,7 @@ public class Player : MonoBehaviour, IHealth
         // if the player isn't invincible
         if (!IsInvincible)
         {
-            AudioHelper.PlayClip2D(_hurtSound, 1f);
+            AudioHelper.PlayClip2D(_hurtSound, _hurtSoundVolume);
             _hurtPS.Play();
 
             _currentHealth -= amount;
@@ -91,7 +94,7 @@ public class Player : MonoBehaviour, IHealth
         // if the player *is* invincible
         else
         {
-            AudioHelper.PlayClip2D(_blockSound, 1f);
+            AudioHelper.PlayClip2D(_blockSound, _blockSoundVolume);
             _blockPS.Play();
         }
     }
@@ -116,7 +119,7 @@ public class Player : MonoBehaviour, IHealth
     public void Kill()
     {
         // FX
-        AudioHelper.PlayClip2D(_deathSound, 1f);
+        AudioHelper.PlayClip2D(_deathSound, _deathSoundVolume);
         
         Vector3 position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         ParticleSystem deathPS = Instantiate(_deathPS, position, Quaternion.identity);

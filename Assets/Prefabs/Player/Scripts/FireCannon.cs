@@ -14,16 +14,17 @@ public class FireCannon : MonoBehaviour
     [SerializeField] ParticleSystem _firePS;
     ParticleSystem _currentFirePS;
     [SerializeField] AudioClip _fireSound;
+    [SerializeField] float _fireSoundVolume = 1f;
 
-    void Update()
+    private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
         {
             SpawnProjectile();
         }
     }
 
-    void SpawnProjectile()
+    private void SpawnProjectile()
     {
         if (!_isOnCooldown)
         {
@@ -33,12 +34,8 @@ public class FireCannon : MonoBehaviour
             _currentProjectile.transform.forward = _origin.forward;
             _currentProjectile.Fire(_currentProjectile.transform.forward);
 
-            _currentFirePS = Instantiate(_firePS);
-            _currentFirePS.transform.position = _origin.position;
-            _currentFirePS.transform.forward = _origin.forward;
-            _currentFirePS.Play();
-
-            AudioHelper.PlayClip2D(_fireSound, 1f);
+            PSManager.Instance.SpawnPS(_firePS,_origin.position, _origin.rotation);
+            AudioHelper.PlayClip2D(_fireSound, _fireSoundVolume);
 
             //Go on cooldown
             StartCoroutine(CooldownCR());

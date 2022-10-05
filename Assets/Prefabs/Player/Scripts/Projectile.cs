@@ -15,13 +15,20 @@ public class Projectile : MonoBehaviour
     [SerializeField] float _projectileSpeed = 5f;
     [Tooltip("How long before the projectile expires.")]
     [SerializeField] float _lifetime = 20f;
+    [Tooltip("Does the projectile ignore collisions with player?")]
     [SerializeField] bool _ignorePlayer = false;
+    [Tooltip("Does the projectile ignore collisions with enemies?")]
     [SerializeField] bool _ignoreEnemies = false;
+    [Tooltip("Does the projectile ignore collisions with projectiles?")]
+    [SerializeField] bool _ignoreProjectiles = true;
 
     [Header("FX")]
+    [Tooltip("PS to play upon collision.")]
     [SerializeField] ParticleSystem _hitPS;
-    ParticleSystem _currentHitPS;
+    //ParticleSystem _currentHitPS;
+    [Tooltip("Audio to play upon collision.")]
     [SerializeField] AudioClip _hitSound;
+    [SerializeField] float _hitSoundVolume = 1f;
 
     private Rigidbody _rb;
 
@@ -33,10 +40,12 @@ public class Projectile : MonoBehaviour
         StartCoroutine(DestroyCR());
     }
 
+    // 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.TryGetComponent<IEnemyHealth>(out IEnemyHealth enemy))
+        if (other.gameObject.TryGetComponent<IDamageableEnemy>(out IDamageableEnemy enemy))
         {
+            // if false, cause the enemy to take damage.
             if (!_ignoreEnemies)
             {
                 enemy.TakeDamage(_damage);
@@ -45,9 +54,19 @@ public class Projectile : MonoBehaviour
         }
         else if (other.gameObject.TryGetComponent<Player>(out Player player))
         {
+            // if false, cause the player to take damage
             if (!_ignorePlayer)
             {
                 player.TakeDamage(_damage);
+                OnHit();
+            }
+        }
+        else if (other.gameObject.TryGetComponent<Projectile>(out Projectile projectile))
+        {
+            // if false, destroy both projectiles
+            if (!_ignoreProjectiles)
+            {
+                projectile.OnHit();
                 OnHit();
             }
         }
@@ -60,11 +79,8 @@ public class Projectile : MonoBehaviour
 
     private void OnHit()
     {
-        _currentHitPS = Instantiate(_hitPS);
-        _currentHitPS.transform.position = gameObject.transform.position;
-        _currentHitPS.Play();
-        AudioHelper.PlayClip2D(_hitSound, 1f);
-
+        PSManager.Instance.SpawnPS(_hitPS, transform.position);
+        AudioHelper.PlayClip2D(_hitSound, _hitSoundVolume);
         Destroy(gameObject);
     }
 

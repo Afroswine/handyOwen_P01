@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Enemy : MonoBehaviour, IEnemyHealth
+public class Enemy : MonoBehaviour, IDamageableEnemy
 {
     [Header("IHealth")]
     [SerializeField] int _maxHealth;
@@ -31,6 +31,7 @@ public class Enemy : MonoBehaviour, IEnemyHealth
         Move();
     }
 
+    // Lose health upon taking damage
     public void TakeDamage(int damage)
     {
         _currentHealth -= damage;
@@ -41,6 +42,7 @@ public class Enemy : MonoBehaviour, IEnemyHealth
 
     }
 
+    // If colliding with player, call PlayerImpact() and ImpactFeedback()
     private void OnCollisionEnter(Collision collision)
     {
         Player player = collision.gameObject.GetComponent<Player>();
@@ -51,11 +53,13 @@ public class Enemy : MonoBehaviour, IEnemyHealth
         }
     }
 
+    // Actions to perform upon colliding with player
     protected virtual void PlayerImpact(Player player)
     {
         player.TakeDamage(_damageAmount);
     }
 
+    // FX to play upon colliding with player
     private void ImpactFeedback()
     {
         //particles
@@ -63,6 +67,7 @@ public class Enemy : MonoBehaviour, IEnemyHealth
         {
             _impactParticles = Instantiate(_impactParticles,
                 transform.position, Quaternion.identity);
+            PSManager.Instance.SpawnPS(_impactParticles, transform.position);
         }
         //audio TODO - consider Object pooling for performance
         if (_impactSound != null)

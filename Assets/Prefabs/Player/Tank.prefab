@@ -168,10 +168,13 @@ MonoBehaviour:
   - {fileID: 6508148207619719922}
   _hurtPS: {fileID: 365303254024175762}
   _hurtSound: {fileID: 8300000, guid: 1b2be639a0df9a34f97d82c3401759f0, type: 3}
+  _hurtSoundVolume: 1
   _deathPS: {fileID: 365303254834361902}
   _deathSound: {fileID: 8300000, guid: f2ba97d9a416aa643896209893339fcc, type: 3}
+  _deathSoundVolume: 1
   _blockPS: {fileID: 365303253857301072}
   _blockSound: {fileID: 8300000, guid: 4f1c8e0b4278a6a478ea648689d1893e, type: 3}
+  _blockSoundVolume: 1
   IsInvincible: 0
   m_HealthUpdate:
     m_PersistentCalls:
@@ -199,6 +202,7 @@ MonoBehaviour:
   _cooldown: 0.5
   _firePS: {fileID: 4923555634454115854}
   _fireSound: {fileID: 8300000, guid: 68a1041e391217c418f459f04d1c6c98, type: 3}
+  _fireSoundVolume: 0.6
 --- !u!64 &6508148206915885325
 MeshCollider:
   m_ObjectHideFlags: 0

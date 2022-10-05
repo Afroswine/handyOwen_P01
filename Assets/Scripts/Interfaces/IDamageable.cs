@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IHealth
+public interface IDamageable
 {
     int MaxHealth { get;}
     int CurrentHealth { get; }
@@ -10,7 +10,12 @@ public interface IHealth
     void TakeDamage(int damage);
 }
 
-public interface IEnemyHealth : IHealth
+public interface IDamageablePlayer : IDamageable
+{
+
+}
+
+public interface IDamageableEnemy : IDamageable
 {
     
 }
