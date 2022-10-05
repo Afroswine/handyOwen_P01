@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+
+[RequireComponent(typeof(Health))]
 [RequireComponent(typeof(TankController))]
-public class Player : MonoBehaviour, IDamageablePlayer
+public class Player : MonoBehaviour
 {
     // backing field
     [Header("Player")]
-    [SerializeField] int _maxHealth = 3;
     [Tooltip("The painted material of the tank's body.")]
     [SerializeField] Material _bodyMaterial;
     public Material BodyMaterial => _bodyMaterial;
@@ -32,77 +33,53 @@ public class Player : MonoBehaviour, IDamageablePlayer
     [SerializeField] AudioClip _blockSound;
     [SerializeField] float _blockSoundVolume = 1f;
 
-    public int MaxHealth
-    {
-        get { return _maxHealth; }
-    }
-    int _currentHealth;
-    public int CurrentHealth
-    {
-        get { return _currentHealth; }
-        private set
-        {
-            if (value > _maxHealth)
-                value = _maxHealth;
-            _currentHealth = value;
-        }
-    }
     int _treasureCount = 0;
     public int TreasureCount => _treasureCount;
     
     [Header("States")]
     public bool IsInvincible = false;
 
-    [HideInInspector] public UnityEvent m_HealthUpdate = new UnityEvent();
-    [HideInInspector] public UnityEvent m_PlayerDeath = new UnityEvent();
-    [HideInInspector] public UnityEvent m_TreasureUpdate = new UnityEvent();
-    
     TankController _tankController;
+    Health _health;
 
     private void Awake()
     {
         _tankController = GetComponent<TankController>();
+        _health = GetComponent<Health>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        _currentHealth = _maxHealth;
-        m_HealthUpdate.Invoke();
+        _health.TookDamage += TakeDamage;
+        _health.Killed += Kill;
     }
 
-    public void IncreaseHealth(int amount)
+    private void OnDisable()
     {
-        _currentHealth += amount;
-        _currentHealth = Mathf.Clamp(_currentHealth, 0, _maxHealth);
-        m_HealthUpdate.Invoke();
+        _health.TookDamage -= TakeDamage;
+        _health.Killed -= Kill;
     }
 
-    public void TakeDamage(int amount)
+
+    public void TakeDamage()
     {
         // if the player isn't invincible
         if (!IsInvincible)
         {
             AudioHelper.PlayClip2D(_hurtSound, _hurtSoundVolume);
-            _hurtPS.Play();
-
-            _currentHealth -= amount;
-            m_HealthUpdate.Invoke();
-
-            if (_currentHealth <= 0)
-                Kill();
+            PSManager.Instance.SpawnPS(_hurtPS, transform.position);
         }
         // if the player *is* invincible
         else
         {
             AudioHelper.PlayClip2D(_blockSound, _blockSoundVolume);
-            _blockPS.Play();
+            PSManager.Instance.SpawnPS(_blockPS, transform.position);
         }
     }
     
     public void IncreaseTreasure(int amount)
     {
         _treasureCount += amount;
-        m_TreasureUpdate.Invoke();
     }
 
     // Recolors the list of _recolorableParts on the Tank
@@ -120,17 +97,7 @@ public class Player : MonoBehaviour, IDamageablePlayer
     {
         // FX
         AudioHelper.PlayClip2D(_deathSound, _deathSoundVolume);
-        
-        Vector3 position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        ParticleSystem deathPS = Instantiate(_deathPS, position, Quaternion.identity);
-        deathPS.Play();
-
-        // Guarantee health is at 0
-        _currentHealth = 0;
-
-        // Call events
-        m_HealthUpdate.Invoke();
-        m_PlayerDeath.Invoke();
+        PSManager.Instance.SpawnPS(_deathPS, transform.position);
 
         // Deactivate the player
         gameObject.SetActive(false);

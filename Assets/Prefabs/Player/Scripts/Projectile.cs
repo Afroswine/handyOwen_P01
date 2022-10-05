@@ -43,33 +43,31 @@ public class Projectile : MonoBehaviour
     // 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.TryGetComponent<IDamageableEnemy>(out IDamageableEnemy enemy))
+        // if the colliding object is IDamageable
+        if(other.gameObject.TryGetComponent<IDamageable>(out IDamageable damageable))
         {
             // if false, cause the enemy to take damage.
-            if (!_ignoreEnemies)
+            if (!_ignoreEnemies
+                && other.gameObject.GetComponent<Enemy>())
             {
-                enemy.TakeDamage(_damage);
+                damageable.TakeDamage(_damage);
                 OnHit();
             }
-        }
-        else if (other.gameObject.TryGetComponent<Player>(out Player player))
-        {
             // if false, cause the player to take damage
-            if (!_ignorePlayer)
+            if (!_ignorePlayer
+                && other.gameObject.GetComponent<Player>())
             {
-                player.TakeDamage(_damage);
+                damageable.TakeDamage(_damage);
+                OnHit();
+            }
+            // if false, destroy the projectile
+            if (!_ignoreProjectiles
+                && other.gameObject.GetComponent<Projectile>())
+            {
                 OnHit();
             }
         }
-        else if (other.gameObject.TryGetComponent<Projectile>(out Projectile projectile))
-        {
-            // if false, destroy both projectiles
-            if (!_ignoreProjectiles)
-            {
-                projectile.OnHit();
-                OnHit();
-            }
-        }
+        // Some other collider was hit, destroy the projectile
         else
         {
             OnHit();

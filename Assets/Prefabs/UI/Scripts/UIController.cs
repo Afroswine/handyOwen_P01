@@ -6,22 +6,27 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField] private Player _player;
+    //[SerializeField] private Player _player;
+    [SerializeField] private Health _playerHealth;
     [SerializeField] Text _treasureText;
     [SerializeField] Text _healthText;
 
+
     private void Awake()
     {
-        _player.m_TreasureUpdate.AddListener(UpdateTreasure);
-        _player.m_HealthUpdate.AddListener(UpdateHealth);
-        _player.m_PlayerDeath.AddListener(DeathScreen);
+
+    }
+
+    private void OnEnable()
+    {
+        _playerHealth.TookDamage += UpdateHealth;
+        _playerHealth.Killed += DeathScreen;
     }
 
     private void OnDisable()
     {
-        _player.m_TreasureUpdate.RemoveListener(UpdateTreasure);
-        _player.m_HealthUpdate.RemoveListener(UpdateHealth);
-        _player.m_PlayerDeath.RemoveListener(DeathScreen);
+        _playerHealth.TookDamage -= UpdateHealth;
+        _playerHealth.Killed -= DeathScreen;
     }
 
     private void Start()
@@ -32,18 +37,19 @@ public class UIController : MonoBehaviour
 
     private void UpdateHealth()
     {
-        _healthText.text = "Health: " + _player.CurrentHealth;
+        //_healthText.text = "Health: " + _player.CurrentHealth;
+        _healthText.text = "Health: " + _playerHealth.CurrentHealth;
     }
 
     private void UpdateTreasure()
     {
-        _treasureText.text = "Treasure: " + _player.TreasureCount;
+        //_treasureText.text = "Treasure: " + _player.TreasureCount;
     }
 
     private void DeathScreen()
     {
-        _player.m_TreasureUpdate.RemoveListener(UpdateTreasure);
-        _player.m_HealthUpdate.RemoveListener(UpdateHealth);
-        _player.m_PlayerDeath.RemoveListener(DeathScreen);
+        //_player.m_TreasureUpdate.RemoveListener(UpdateTreasure);
+        //_player.m_HealthUpdate.RemoveListener(UpdateHealth);
+        //_player.m_PlayerDeath.RemoveListener(DeathScreen);
     }
 }
