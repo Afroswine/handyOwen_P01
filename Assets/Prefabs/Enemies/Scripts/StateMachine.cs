@@ -14,19 +14,25 @@ public class StateMachine : MonoBehaviour
 
     public virtual void BeginState(State state)
     {
-        CurrentState = state;
-        state.Enter();
-        Debug.Log("Begin State: " + state.ToString());
+        if(CurrentState != state)
+        {
+            CurrentState = state;
+            state.Enter();
+            Debug.Log("Begin State: " + state.ToString());
+        }
     }
 
     public virtual void ChangeState(State newState)
     {
-        Debug.Log("Changed State: " + CurrentState.ToString() + " => " + newState.ToString());
-        // run Exit() on current state
-        CurrentState.Exit();
+        if(CurrentState != newState)
+        {
+            Debug.Log("Changed State: " + CurrentState.ToString() + " => " + newState.ToString());
+            // run Exit() on current state
+            CurrentState.Exit();
 
-        CurrentState = newState;
-        // run Enter() on new state
-        newState.Enter();
+            CurrentState = newState;
+            // run Enter() on new state
+            newState.Enter();
+        }
     }
 }

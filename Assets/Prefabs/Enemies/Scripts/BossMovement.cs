@@ -19,6 +19,8 @@ public class BossMovement : MonoBehaviour
 
     // events
     public event Action PathingEnded = delegate { };
+    public event Action Charged = delegate { };
+    
 
     /*
     public BossMovement(BossController controller)
@@ -40,18 +42,28 @@ public class BossMovement : MonoBehaviour
         _originalAcceleration = _agent.acceleration;
     }
 
+    private void ResetAgentSteering()
+    {
+        _agent.speed = _originalSpeed;
+        _agent.angularSpeed = _originalAngularSpeed;
+        _agent.acceleration = _originalAcceleration;
+        _agent.autoBraking = true;
+    }
+    
     // set agent steering stats
-    private void SetAgentSteering(float speed, float angularSpeed, float acceleration)
+    private void SetAgentSteering(float speed, float angularSpeed, float acceleration, bool autoBraking)
     {
         _agent.speed = speed;
         _agent.angularSpeed = angularSpeed;
         _agent.acceleration = acceleration;
+        _agent.autoBraking = autoBraking;
     }
 
     // Tells the agent to move to the given destination
     public void MoveToDestination(Vector3 destination)
     {
         _reachedDestination = false;
+
         Destination = destination;
         _agent.SetDestination(destination);
         StartCoroutine(DestinationStatusCR());
@@ -61,50 +73,73 @@ public class BossMovement : MonoBehaviour
     public void BeginCharge(float duration)
     {
         StartCoroutine(ChargeWindupCR(duration));
-    }
 
-    // Charge after delay
-    private IEnumerator ChargeWindupCR(float delay)
-    {
-        SetAgentSteering(0f, _originalAngularSpeed, _originalAcceleration);
-
-        float timestamp = Time.time + delay;
-        NavMeshHit hit;
-
-        while(Time.time < timestamp)
+        // Charge after delay
+        IEnumerator ChargeWindupCR(float delay)
         {
-            _agent.Raycast(_controller.transform.forward * 100f, out hit);
-            Destination = hit.position;
-            _agent.SetDestination(hit.position);
-            yield return new WaitForEndOfFrame();
+            _reachedDestination = false;
+            SetAgentSteering(0f, _originalAngularSpeed, _originalAcceleration, true);
+
+            float timestamp = Time.time + delay;
+            NavMeshHit hit;
+            Vector3 destination = default(Vector3);
+
+            // Windup Phase, rotate towards target every frame
+            while (Time.time < timestamp)
+            {
+                ChargeWindupRotation();
+
+                _agent.Raycast(_controller.transform.forward * 100f, out hit);
+                destination = hit.position;
+                Destination = destination;
+
+                _agent.SetDestination(destination);
+                yield return new WaitForEndOfFrame();
+            }
+
+            // Charge forward
+            Charge(destination);
+
         }
 
-        Charge(Destination);
+        // Rotate towards the player during windup
+        void ChargeWindupRotation()
+        {
+            Vector3 aimPos = _controller.Target.transform.position - _controller.transform.position;
+            aimPos.y = 0;
+            Quaternion goalRotation = Quaternion.LookRotation(aimPos, Vector3.up);
+
+            _controller.transform.rotation = Quaternion.Slerp(_controller.transform.rotation, goalRotation, Time.deltaTime * 2f);
+        }
+
+        // Charge forward
+        void Charge(Vector3 destination)
+        {
+            SetAgentSteering(_controller.ChargeSpeed, _controller.ChargeAngularSpeed, _controller.ChargeAcceleration, false);
+            MoveToDestination(destination);
+            Charged.Invoke();
+            StartCoroutine(DestinationStatusCR());
+        }
     }
-    
-    // Charge directly at the target with temporary speed and acceleration adjustments
-    private void Charge(Vector3 destination)
+
+    public void Crash()
     {
-        SetAgentSteering(_controller.ChargeSpeed, _controller.ChargeAngularSpeed, _controller.ChargeAcceleration);
-        MoveToDestination(destination * 1.15f);
-        StartCoroutine(DestinationStatusCR(true));
+        _agent.isStopped = true;
+        _agent.ResetPath();
     }
 
     // Checks every frame to see if the agent has reached its destination
-    private IEnumerator DestinationStatusCR(bool resetSteering = false)
+    private IEnumerator DestinationStatusCR()
     {
         while(_reachedDestination == false)
         {
             _reachedDestination = NavMeshUtility.ReachedDestinationOrGaveUp(_agent);
             yield return new WaitForEndOfFrame();
         }
-        if (resetSteering)
-        {
-            SetAgentSteering(_originalSpeed, _originalAngularSpeed, _originalAcceleration);
-        }
-
-        PathingEnded.Invoke();
+        
         Debug.Log("Boss has reached its destination.");
+        ResetAgentSteering();
+        PathingEnded.Invoke();
     }
     
 }

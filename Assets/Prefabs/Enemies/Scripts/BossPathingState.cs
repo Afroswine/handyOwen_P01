@@ -8,7 +8,8 @@ public class BossPathingState : State
     BossController _controller;
     BossMovement _movement;
 
-    public Vector3 Destination; // used by BossMovementEditor
+    // charge is taken off cooldown after performing a normal movement action
+    private bool _chargeOnCooldown = true;
 
     // constructor lets us pass in references we need
     public BossPathingState(BossController bossController)
@@ -19,8 +20,7 @@ public class BossPathingState : State
 
     public override void Enter()
     {
-        //DetermineMovementAction();
-        Charge(_controller.ChargeWindupDuration);
+        Move(_controller.MoveRadius);
     }
 
     public override void Update()
@@ -30,34 +30,14 @@ public class BossPathingState : State
 
     public override void Exit()
     {
-
+        _controller.ChargeOnCooldown = false;
     }
 
     // Move to a random position within radius of _controller.Target
     private void Move(float radius)
     {
         Vector3 destination = NavMeshUtility.RandomNavMeshLocation(radius, _controller.Target);
-        Destination = destination;
         _movement.MoveToDestination(destination);
-    }
-
-    // Begin winding up for a fast charge movement
-    private void Charge(float windupDuration)
-    {
-        _movement.BeginCharge(windupDuration);
-    }
-
-    // Determine whether to Move or Charge
-    private void DetermineMovementAction()
-    {
-        // if the target is not far enough away to charge
-        if (_controller.DistanceFromTarget(_controller.Target) < _controller.MinChargeDistance)
-        {
-            Move(_controller.MoveRadius);
-        }
-        else
-        {
-            Charge(_controller.ChargeWindupDuration);
-        }
+        _chargeOnCooldown = false;
     }
 }

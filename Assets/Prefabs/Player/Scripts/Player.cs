@@ -31,19 +31,22 @@ public class Player : MonoBehaviour
     [Tooltip("Audio to play when the player blocks an attack.")]
     [SerializeField] AudioClip _blockSound;
     [SerializeField] float _blockSoundVolume = 1f;
-
-    int _treasureCount = 0;
-    public int TreasureCount => _treasureCount;
     
     [Header("States")]
     public bool IsInvincible = false;
+    [SerializeField] float _invulernabilityDuration = 1.5f;
+
+    int _treasureCount = 0;
+    public int TreasureCount => _treasureCount;
 
     TankController _tankController;
+    BoxCollider _collider;
     Health _health;
 
     private void Awake()
     {
         _tankController = GetComponent<TankController>();
+        _collider = GetComponent<BoxCollider>();
         _health = GetComponent<Health>();
     }
 
@@ -74,6 +77,15 @@ public class Player : MonoBehaviour
             AudioHelper.PlayClip2D(_blockSound, _blockSoundVolume);
             PSManager.Instance.SpawnPS(_blockPS, transform.position);
         }
+    }
+
+    private IEnumerator InvulernabilityPeriodCR()
+    {
+        IsInvincible = true;
+        //_collider.isTrigger = true;
+        yield return new WaitForSeconds(_invulernabilityDuration);
+        IsInvincible = false;
+        //_collider.isTrigger = false;
     }
     
     public void IncreaseTreasure(int amount)

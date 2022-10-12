@@ -6,6 +6,7 @@ public class BossNeutralState : State
 {
     // this is our StateMachine owner
     BossController _controller;
+    BossMovement _movement;
 
     // constructor lets us pass in references we need
     public BossNeutralState(BossController bossController)
@@ -15,8 +16,7 @@ public class BossNeutralState : State
 
     public override void Enter()
     {
-        //Debug.Log("Boss Neutral Enter.");
-        _controller.ChangeStateDelayed(_controller.PathingState, _controller.MoveWait);
+        DetermineNextState();
     }
 
     public override void Update()
@@ -26,6 +26,32 @@ public class BossNeutralState : State
 
     public override void Exit()
     {
-        //Debug.Log("Boss Neutral Exit.");
+        
+    }
+
+    private void DetermineNextState()
+    {
+        if (!_controller.ChargeOnCooldown)
+        {
+            // Charge
+            if(_controller.DistanceFromTarget(_controller.Target) >= _controller.MinChargeDistance)
+            {
+                _controller.ChangeStateDelayed(_controller.ChargingState, _controller.MoveWait);
+                return;
+            }
+            // Move
+            else
+            {
+                _controller.ChangeStateDelayed(_controller.PathingState, _controller.MoveWait);
+                return;
+            }
+        }
+
+        // Move
+        if (_controller.ChargeOnCooldown)
+        {
+            _controller.ChangeStateDelayed(_controller.PathingState, _controller.MoveWait);
+            return;
+        }
     }
 }

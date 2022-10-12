@@ -32,6 +32,65 @@ Transform:
   m_Father: {fileID: 1536315285697056244}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1348611035
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1348611036}
+  - component: {fileID: 1348611037}
+  - component: {fileID: 7832858588052522527}
+  m_Layer: 9
+  m_Name: CrashCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1348611036
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348611035}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1536315285697056244}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1348611037
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348611035}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 1, z: 2}
+  m_Center: {x: 0, y: 1, z: 1.5}
+--- !u!114 &7832858588052522527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1348611035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d67e623721160cf408f6f8feb7b0ce27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _movement: {fileID: 5282341786511403887}
 --- !u!1 &749701788346879942
 GameObject:
   m_ObjectHideFlags: 0
@@ -152,6 +211,7 @@ Transform:
   m_Children:
   - {fileID: 3514891837515593460}
   - {fileID: 966201695}
+  - {fileID: 1348611036}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -166,8 +226,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 4, y: 4, z: 3.5}
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Size: {x: 4, y: 2, z: 3.5}
+  m_Center: {x: -0, y: 1, z: 0}
 --- !u!54 &254032332
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -176,13 +236,13 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1536315285697056245}
   serializedVersion: 2
-  m_Mass: 10
+  m_Mass: 20
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 4
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!195 &225708872
 NavMeshAgent:
@@ -193,16 +253,16 @@ NavMeshAgent:
   m_GameObject: {fileID: 1536315285697056245}
   m_Enabled: 1
   m_AgentTypeID: -1372625422
-  m_Radius: 2.4
-  m_Speed: 5
+  m_Radius: 1.5
+  m_Speed: 10
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 180
-  m_StoppingDistance: 2
+  m_StoppingDistance: 3
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 3
+  m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
@@ -220,13 +280,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _target: {fileID: 0}
   _movementScript: {fileID: 5282341786511403887}
-  _moveWait: 1
-  _moveRadius: 15
-  _minChargeDistance: 20
+  _moveWait: 0.1
+  _moveRadius: 10
+  _crashCollider: {fileID: 0}
+  _minChargeDistance: 10
   _chargeWindupDuration: 3
-  _chargeSpeed: 10
+  _chargeSpeed: 70
   _chargeAngularSpeed: 60
-  _chargeAcceleration: 16
+  _chargeAcceleration: 140
+  ChargeOnCooldown: 1
 --- !u!114 &254032330
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -33,7 +33,6 @@ public class Health : MonoBehaviour, IDamageable
         _currentHealth = 0;
         Killed.Invoke();
     }
-
 }
 
 

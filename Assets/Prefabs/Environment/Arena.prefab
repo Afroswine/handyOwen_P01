@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7010787897183466071}
   - component: {fileID: 5093471378366695069}
   - component: {fileID: 5867680804945292306}
+  - component: {fileID: 3469287838444276050}
   m_Layer: 10
   m_Name: Arena
   m_TagString: Untagged
@@ -99,3 +100,19 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4164361407500241290, guid: 0dd84cfa787ae8a4fa6a63ff5e0910b5, type: 3}
+--- !u!114 &3469287838444276050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6750712546241881928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d07ce676d7afda4dabb3b0f7dd5e654, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 1
+  m_Area: 1
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff

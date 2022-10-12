@@ -17,6 +17,7 @@ public class BossController : StateMachine
     [Tooltip("Max distance to check for normal movement destinations.")]
     [SerializeField] float _moveRadius = 20f;
     [Header("Charge Movement")]
+    [SerializeField] BoxCollider _crashCollider;
     [Tooltip("Min distance the boss has to be from the player to charge at them.")]
     [SerializeField] float _minChargeDistance = 20f;
     [SerializeField] float _chargeWindupDuration = 3f;
@@ -28,19 +29,25 @@ public class BossController : StateMachine
     public NavMeshAgent Agent { get; private set; }
     public GameObject Target => _target;
     public BossMovement Movement => _movementScript;
+
+    // Movement
     public float MoveWait => _moveWait;
     public float MoveRadius => _moveRadius;
+
+    // Charge
+    public BoxCollider CrashCollider => _crashCollider;
     public float ChargeWindupDuration => _chargeWindupDuration;
     public float MinChargeDistance => _minChargeDistance;
     public float ChargeSpeed => _chargeSpeed;
     public float ChargeAngularSpeed => _chargeAngularSpeed;
     public float ChargeAcceleration => _chargeAcceleration;
+    public bool ChargeOnCooldown = true;
     #endregion Public Reference Variables END
 
     #region Boss States
     public BossNeutralState NeutralState;
     public BossPathingState PathingState;
-    public BossAttackingState AttackingState;
+    public BossChargingState ChargingState;
     #endregion Boss States END
 
     private void Awake()
@@ -50,7 +57,7 @@ public class BossController : StateMachine
         // initialize all states
         NeutralState = new BossNeutralState(this);
         PathingState = new BossPathingState(this);
-        AttackingState = new BossAttackingState(this);
+        ChargingState = new BossChargingState(this);
 
         //Movement = new BossMovement(this);
     }
@@ -85,7 +92,6 @@ public class BossController : StateMachine
     {
         yield return new WaitForSeconds(delay);
         ChangeState(state);
-        //yield break;
     }
 
     public float DistanceFromTarget(GameObject go)

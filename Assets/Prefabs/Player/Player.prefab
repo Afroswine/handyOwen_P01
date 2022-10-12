@@ -80,10 +80,9 @@ GameObject:
   - component: {fileID: 6508148207564581245}
   - component: {fileID: 6508148207564581244}
   - component: {fileID: 6508148206915885323}
-  - component: {fileID: 6508148206915885325}
   - component: {fileID: 2124494388}
   m_Layer: 8
-  m_Name: Tank
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -128,13 +127,13 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6508148207564581241}
   serializedVersion: 2
-  m_Mass: 10
+  m_Mass: 40
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 4
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &6508148207564581245
 MonoBehaviour:
@@ -176,6 +175,7 @@ MonoBehaviour:
   _blockSound: {fileID: 8300000, guid: 4f1c8e0b4278a6a478ea648689d1893e, type: 3}
   _blockSoundVolume: 1
   IsInvincible: 0
+  _invulernabilityDuration: 1.5
 --- !u!114 &6508148206915885323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,20 +194,6 @@ MonoBehaviour:
   _firePS: {fileID: 4923555634454115854}
   _fireSound: {fileID: 8300000, guid: 68a1041e391217c418f459f04d1c6c98, type: 3}
   _fireSoundVolume: 0.6
---- !u!64 &6508148206915885325
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6508148207564581241}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!114 &2124494388
 MonoBehaviour:
   m_ObjectHideFlags: 0
