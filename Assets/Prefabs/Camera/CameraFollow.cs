@@ -9,8 +9,14 @@ public class CameraFollow : MonoBehaviour
 
     private void LateUpdate()
     {
-        Vector3 desiredPosition = _target.position + _offset;
-        Vector3 smoothedPosition = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, _smoothTime);
+        FollowSmoothed(_target, _offset, _smoothTime);
+    }
+
+    // Smoothly follows the target. The smoothTime default (0) = no smoothing
+    private void FollowSmoothed(Transform target, Vector3 offset, float smoothTime = 0)
+    {
+        Vector3 desiredPosition = target.position + offset;
+        Vector3 smoothedPosition = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, smoothTime);
         transform.position = smoothedPosition;
     }
 }

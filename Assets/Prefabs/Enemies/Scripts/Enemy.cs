@@ -12,8 +12,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] AudioClip _impactSound;
     [SerializeField] float _impactSoundVolume = 1f;
     private Health _health;
+    public Health Health => _health;
 
-    Rigidbody _rb;
+    private Rigidbody _rb;
+    public Rigidbody RB => _rb;
 
     private void Awake()
     {
